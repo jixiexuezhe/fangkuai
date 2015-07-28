@@ -107,7 +107,7 @@ import javax.swing.event.*;
 					else if (isfall == 0) {
 						// lsc.drawUnit(i, j, 2); // 无法下落，画为BLUE
 						lsc.unitState[i][j] = 2;// 将状态记录改变，用于画下张图
-						lsc.deleteFullLine(i); // 判断此行是否可以消
+//						lsc.deleteFullLine(i); // 判断此行是否可以消
 					}
 				}
 				comIndex = comIndex >> 1;
@@ -216,7 +216,7 @@ class LeftShowCanvas extends Canvas {
 
 	public LeftShowCanvas(RightPanel rp) {
 		this.rp = rp;
-		score = Integer.valueOf(rp.jtf.getText());
+//		score = Integer.valueOf(rp.jtf.getText());
 		maxrows = 20;
 		maxcols = 10;
 		unitSize = 20;
@@ -314,22 +314,22 @@ class RightPanel extends JPanel {
 
 		jp1 = new JPanel(); // 左边的上面板
 		jp2 = new JPanel(); // 左边的下面板
-//		jp1.setLayout(new GridLayout(4, 2, 20, 10)); // 网格布局
-//		jp2.setLayout(new GridLayout(4, 2, 20, 10)); // 网格布局
-//		this.setLayout(new BorderLayout()); // 边界布局
-//		for (int i = 0; i < 7; i++)
-//			jp1.add(jbt[i]);
+		jp1.setLayout(new GridLayout(4, 2, 20, 10)); // 网格布局
+		jp2.setLayout(new GridLayout(4, 2, 20, 10)); // 网格布局
+		this.setLayout(new BorderLayout()); // 边界布局
+		for (int i = 0; i < 7; i++)
+			jp1.add(jbt[i]);
 
-//		jp1.add(jbt3);
+		jp1.add(jbt3);
 
-//		for (int i = 0; i < 4; i++)
-//			jp2.add(jbt2[i]);
+		for (int i = 0; i < 4; i++)
+			jp2.add(jbt2[i]);
 
-//		jp2.add(jlb);
-//		jp2.add(jtf);
+		jp2.add(jlb);
+		jp2.add(jtf);
 
-//		this.add(jp1, "North");
-//		this.add(jp2, "Center");
+		this.add(jp1, "North");
+		this.add(jp2, "Center");
 	}
 }
 
@@ -364,14 +364,14 @@ class MyActionListener implements ActionListener {
 			Thread th = new Thread(bl);
 			th.start();
 		}
-		for (int i = 0; i < Block.type; i++)
-			if (e.getSource().equals(rp.jbt[i])) // 看是画哪个
-			{
-				bl.reInitRowCol();
-				bl.drawBlock(i);
-				lsc.requestFocusInWindow(); // 获得焦点
-				return;
-			}
+//		for (int i = 0; i < Block.type; i++)
+//			if (e.getSource().equals(rp.jbt[i])) // 看是画哪个
+//			{
+//				bl.reInitRowCol();
+//				bl.drawBlock(i);
+//				lsc.requestFocusInWindow(); // 获得焦点
+//				return;
+//			}
 		if (e.getSource().equals(rp.jbt2[0]))
 			bl.leftMove();
 		else if (e.getSource().equals(rp.jbt2[1]))
@@ -380,7 +380,7 @@ class MyActionListener implements ActionListener {
 			bl.fallMove();
 		else if (e.getSource().equals(rp.jbt2[3]))
 			bl.leftTurn();
-		lsc.requestFocusInWindow(); // 获得焦点
+//		lsc.requestFocusInWindow(); // 获得焦点
 	}
 }
 
@@ -418,7 +418,7 @@ class MyKeyAdapter extends KeyAdapter {
 		setLayout(new GridLayout(1, 2, 50, 30));
 		rp = new RightPanel();
 		lsc = new LeftShowCanvas(rp);
-//		bl = new Block(lsc);
+		bl = new Block(lsc);
 		rp.setSize(80, 400);
 		for (int i = 0; i < 7; i++)
 			// 为每个按钮添加消息监听
@@ -429,12 +429,12 @@ class MyKeyAdapter extends KeyAdapter {
 		lsc.addKeyListener(new MyKeyAdapter(bl));
 		this.add(lsc);
 		this.add(rp);
-		this.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				dispose();
-				System.exit(0);
-			}
-		});
+//		this.addWindowListener(new WindowAdapter() {
+//			public void windowClosing(WindowEvent e) {
+//				dispose();
+//				System.exit(0);
+//			}
+//		});
 		setVisible(true);
 	}
 }
