@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,7 +33,13 @@ public class Launcher implements Runnable {
 	private int row, col; // 方块所在的行数，列数
 	private int blockType = -1; // 方块类型，7种，大小范围0-6
 	private int blockState = -1; // 方块状态，4种，大小范围0-3
+
+	private int oldRow, oldCol; // 记录方块变化前所在的行数，列数
+	private int oldType = -1, oldState; // 记录方块变化前的类型和状态
+
 	private int isfall = 1;// 绘画颜色标志
+
+	private boolean end = false;// 结束标记，为true时表示结束
 
 	TopJPanel topj;
 
@@ -40,27 +47,118 @@ public class Launcher implements Runnable {
 		this.topj = topJPanel;
 		row = 0;
 		col = 3;
+		oldRow = row;
+		oldCol = col;
+	}
+
+	public void reInit() {
+		blockType = -1;
+		isfall = 1;
+	}
+
+	public void reInitRowCol() // 初始化方块起始点
+	{
+		row = 0;
+		col = 3;
 	}
 
 	@Override
 	public void run() {
 		topj.requestFocusInWindow();
-		drawfk(blockType);
-		System.out.println("ok");
+		while (!end) {
+			int blocktype = (int) (Math.random() * 100) % 7;
+			drawfk(blocktype);
+			do {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} while (fallmove());
+			for (int j = 0; j < topj.maxcol; j++) {
+				// 判断是否结束
+				if (topj.unitState[3][j] == 2) {
+					end = true;
+				}
+			}
+		}
 	}
 
-	public synchronized void drawfk(int blockType) {
-		blockType = 5;
-		blockState = 2;
+	boolean fallmove() {
+		if (this.blockType != -1) {
+			if (isMove(2)) {
+				row += 1;
+				drawfk(blockType);
+				return true;
+			} else {
+				isfall = 0;
+				drawfk(blockType);
+				return false;
+			}
+		}
+		return true;
+	}
 
+	public synchronized boolean isMove(int tag) // 左 0 ，右 1 ，下 2 ,旋转 3
+	{
 		int comIndex = 0x8000;
 		for (int i = row; i < row + 4; i++)
 			for (int j = col; j < col + 4; j++) {
 				if ((patten[blockType][blockState] & comIndex) != 0) {
-					if (isfall == 1)
+					// if (tag == 0 && (j == 0 || lsc.unitState[i][j - 1] ==
+					// 2))// 是否能左移
+					// return false;
+					// else if (tag == 1 && // 是否能右移
+					// (j == lsc.maxcols - 1 || lsc.unitState[i][j + 1] == 2))
+					// return false;
+					// else if (tag == 2 && // 是否能下移
+					// (i == lsc.maxrows - 1 || lsc.unitState[i + 1][j] == 2))
+					// return false;
+					// else if (tag == 3 && // 是否能旋转
+					// (i > lsc.maxrows - 1 || j < 0 || j > lsc.maxcols - 1 ||
+					// lsc.unitState[i][j] == 2))
+					// return false;
+					if (tag == 2 && (i == topj.maxrow - 1 || topj.unitState[i + 1][j] == 2)) {
+						return false;
+					}
+				}
+				comIndex = comIndex >> 1;
+			}
+		return true;
+	}
+
+	public synchronized void drawfk(int blockType) {
+		blockState = 0;
+		this.blockType = blockType;
+
+		if (!isMove(3)) // 判断是否能画
+		{
+			this.blockType = oldType;
+			this.blockState = oldState;
+			return;
+		}
+
+		// 还原
+		int comIndex = 0x8000;
+		if (this.oldType != -1) {
+			for (int i = oldRow; i < oldRow + 4; i++)
+				for (int j = oldCol; j < oldCol + 4; j++) {
+					if ((patten[oldType][oldState] & comIndex) != 0 && topj.unitState[i][j] == 1)
+						// lsc.drawUnit(i, j, 0); // 先还原
+						topj.unitState[i][j] = 0;// 将状态记录改变，用于画下张图
+					comIndex = comIndex >> 1;
+				}
+		}
+
+		comIndex = 0x8000;
+		for (int i = row; i < row + 4; i++)
+			for (int j = col; j < col + 4; j++) {
+				if ((patten[blockType][blockState] & comIndex) != 0) {
+					if (isfall == 1) {
 						// lsc.drawUnit(i, j, 1); // 再画，画为RED
 						topj.unitState[i][j] = 1; // 将状态记录改变
-					else if (isfall == 0) {
+						System.out.println(topj.unitState[i][j]);
+					} else if (isfall == 0) {
 						// lsc.drawUnit(i, j, 2); // 无法下落，画为BLUE
 						topj.unitState[i][j] = 2;// 将状态记录改变，用于画下张图
 						// topj.deleteFullLine(i); // 判断此行是否可以消
@@ -70,37 +168,20 @@ public class Launcher implements Runnable {
 			}
 		Image image;
 		image = topj.createImage(topj.getWidth(), topj.getHeight());
-	}
+		Graphics gr = image.getGraphics();
+		topj.paint(gr);
+		gr.drawImage(image, 0, 0, topj);
 
-}
+		if (isfall == 0) // 无法下落，先判断是否能消行，再重新初始化
+		{
+			// lsc.deleteFullLine(row,col);
+			reInit();
+			reInitRowCol();
+		}
 
-// 窗口
-class MyWindow extends JFrame {
-
-	private static final long serialVersionUID = 1L;
-
-	TopJPanel topJPanel;
-	BottomJPanel bp;
-
-	Launcher launcher;
-
-	public MyWindow() {
-		super("俄罗斯方块-made in china！");
-		setBounds(500, 100, 500, 455);
-		setLayout(new GridLayout(1, 2, 10, 100));
-
-		bp = new BottomJPanel();
-		bp.setSize(80, 600);
-		topJPanel = new TopJPanel(bp);
-		launcher = new Launcher(topJPanel);
-
-		// 监听
-		bp.jb[2].addActionListener(new MyKeyListener(topJPanel, launcher, bp));
-
-		this.add(topJPanel);
-		this.add(bp);
-
-		this.setVisible(Boolean.TRUE);
+		oldRow = row;
+		oldCol = col;
+		oldType = blockType;
 	}
 
 }

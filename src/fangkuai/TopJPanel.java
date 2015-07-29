@@ -6,20 +6,20 @@ import java.awt.Graphics;
 
 public class TopJPanel extends Canvas {
 	// 单元格大小
-	private static int unitSize = 20;
+	int unitSize = 20;
 	// 最大行
-	private static int maxrow = 10;
+	int maxrow;
 	// 最大列
-	private static int maxcol = 20;
+	int maxcol;
 
 	int[][] unitState;// 0为黑色，1为红色，2位蓝色
-	
 
 	BottomJPanel bJPanel;
 
 	public TopJPanel(BottomJPanel bJPanel) {
 		this.bJPanel = bJPanel;
-
+		maxrow = 20;
+		maxcol = 10;
 		unitState = new int[maxrow][maxcol];
 	}
 
@@ -32,7 +32,7 @@ public class TopJPanel extends Canvas {
 			}
 			if (i == 3) {
 				gr.setColor(Color.GREEN);
-				gr.drawLine(0, i * (unitSize + 1) - 1, maxcol * (unitSize + 1) - 1, i * (unitSize + 1) - 1);
+				gr.drawLine(0, (i + 1) * (unitSize + 1) - 1, (maxcol + 1) * (unitSize + 1) - 1, (i + 1) * (unitSize + 1) - 1);
 			}
 		}
 	}
@@ -58,6 +58,6 @@ public class TopJPanel extends Canvas {
 			break;
 		}
 
-		gr.fillRect(i * (unitSize + 1), j * (unitSize + 1), unitSize, unitSize);
+		gr.fillRect(j * (unitSize + 1), i * (unitSize + 1), unitSize, unitSize);
 	}
 }

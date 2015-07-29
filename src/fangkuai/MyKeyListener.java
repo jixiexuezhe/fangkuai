@@ -23,6 +23,9 @@ public class MyKeyListener implements ActionListener {
 			Thread th=new Thread(launcher);
 			th.start();
 		}
+		if(e.getSource().equals(bom.jb[1])){
+			launcher.fallmove();
+		}
 		top.requestFocusInWindow();
 	}
 }

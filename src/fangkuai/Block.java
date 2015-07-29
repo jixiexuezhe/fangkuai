@@ -64,7 +64,7 @@ import javax.swing.event.*;
 			drawBlock(blocktype);
 			do {
 				try {
-					Thread.sleep(500); // 控制下落速度
+					Thread.sleep(50); // 控制下落速度
 				} catch (InterruptedException e) {
 
 				}
@@ -372,14 +372,17 @@ class MyActionListener implements ActionListener {
 //				lsc.requestFocusInWindow(); // 获得焦点
 //				return;
 //			}
-		if (e.getSource().equals(rp.jbt2[0]))
-			bl.leftMove();
-		else if (e.getSource().equals(rp.jbt2[1]))
-			bl.rightMove();
-		else if (e.getSource().equals(rp.jbt2[2]))
-			bl.fallMove();
-		else if (e.getSource().equals(rp.jbt2[3]))
-			bl.leftTurn();
+//		if (e.getSource().equals(rp.jbt2[0]))
+//			bl.leftMove();
+//		else if (e.getSource().equals(rp.jbt2[1]))
+//			bl.rightMove();
+//		else if (e.getSource().equals(rp.jbt2[2]))
+//			bl.fallMove();
+//		else if (e.getSource().equals(rp.jbt2[3]))
+//			bl.leftTurn();
+//		if(e.getSource().equals(rp.jbt2[2])){
+//			bl.fallMove();
+//		}
 //		lsc.requestFocusInWindow(); // 获得焦点
 	}
 }
