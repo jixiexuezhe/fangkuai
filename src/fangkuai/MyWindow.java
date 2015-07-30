@@ -24,6 +24,8 @@ public class MyWindow extends JFrame{
 
 		// 监听
 		bp.jb[2].addActionListener(new MyKeyListener(topJPanel, launcher, bp));
+		topJPanel.addKeyListener(new MyKeyAdapters(launcher));
+		
 
 		this.add(topJPanel);
 		this.add(bp);

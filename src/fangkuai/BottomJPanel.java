@@ -4,13 +4,14 @@ import java.awt.GridLayout;
 
 import javax.swing.*;
 
-public class BottomJPanel extends JPanel{
+public class BottomJPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	JButton[] jb = new JButton[4];
 	JButton[] jb2 = new JButton[3];
 
 	JLabel jl;
+	JTextField jtf;
 
 	JPanel jp1, jp2;
 
@@ -25,6 +26,7 @@ public class BottomJPanel extends JPanel{
 		jb2[2] = new JButton("结束");
 
 		jl = new JLabel("得分：");
+		jtf = new JTextField("0",5);
 
 		jp1 = new JPanel();
 		jp2 = new JPanel();
@@ -39,9 +41,9 @@ public class BottomJPanel extends JPanel{
 			jp2.add(jb2[i]);
 		}
 
-		jp2.add(jl);
-		
-		this.add(jp1,"South");
-		this.add(jp2,"South");
+		jp1.add(jl);
+		jp2.add(jtf);
+		this.add(jp1, "South");
+		this.add(jp2, "South");
 	}
 }

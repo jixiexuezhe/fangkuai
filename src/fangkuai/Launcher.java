@@ -41,7 +41,10 @@ public class Launcher implements Runnable {
 
 	private boolean end = false;// 结束标记，为true时表示结束
 
+	private int score = 0;
+
 	TopJPanel topj;
+	BottomJPanel bp =new BottomJPanel();
 
 	public Launcher(TopJPanel topJPanel) {
 		this.topj = topJPanel;
@@ -70,7 +73,7 @@ public class Launcher implements Runnable {
 			drawfk(blocktype);
 			do {
 				try {
-					Thread.sleep(50);
+					Thread.sleep(300);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -84,52 +87,22 @@ public class Launcher implements Runnable {
 		}
 	}
 
-	boolean fallmove() {
-		if (this.blockType != -1) {
-			if (isMove(2)) {
-				row += 1;
-				drawfk(blockType);
-				return true;
-			} else {
-				isfall = 0;
-				drawfk(blockType);
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public synchronized boolean isMove(int tag) // 左 0 ，右 1 ，下 2 ,旋转 3
-	{
-		int comIndex = 0x8000;
-		for (int i = row; i < row + 4; i++)
-			for (int j = col; j < col + 4; j++) {
-				if ((patten[blockType][blockState] & comIndex) != 0) {
-					// if (tag == 0 && (j == 0 || lsc.unitState[i][j - 1] ==
-					// 2))// 是否能左移
-					// return false;
-					// else if (tag == 1 && // 是否能右移
-					// (j == lsc.maxcols - 1 || lsc.unitState[i][j + 1] == 2))
-					// return false;
-					// else if (tag == 2 && // 是否能下移
-					// (i == lsc.maxrows - 1 || lsc.unitState[i + 1][j] == 2))
-					// return false;
-					// else if (tag == 3 && // 是否能旋转
-					// (i > lsc.maxrows - 1 || j < 0 || j > lsc.maxcols - 1 ||
-					// lsc.unitState[i][j] == 2))
-					// return false;
-					if (tag == 2 && (i == topj.maxrow - 1 || topj.unitState[i + 1][j] == 2)) {
-						return false;
-					}
-				}
-				comIndex = comIndex >> 1;
-			}
-		return true;
-	}
-
 	public synchronized void drawfk(int blockType) {
-		blockState = 0;
+
+		if (this.blockType != blockType)
+			blockState = (int) (Math.random() * 100) % 4; // 状态
 		this.blockType = blockType;
+		
+		
+		if(blockType <0){
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("the blockType is:"+blockType);
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		}
 
 		if (!isMove(3)) // 判断是否能画
 		{
@@ -157,11 +130,10 @@ public class Launcher implements Runnable {
 					if (isfall == 1) {
 						// lsc.drawUnit(i, j, 1); // 再画，画为RED
 						topj.unitState[i][j] = 1; // 将状态记录改变
-						System.out.println(topj.unitState[i][j]);
 					} else if (isfall == 0) {
 						// lsc.drawUnit(i, j, 2); // 无法下落，画为BLUE
 						topj.unitState[i][j] = 2;// 将状态记录改变，用于画下张图
-						// topj.deleteFullLine(i); // 判断此行是否可以消
+						this.deleteFullLine(i); // 判断此行是否可以消
 					}
 				}
 				comIndex = comIndex >> 1;
@@ -182,6 +154,80 @@ public class Launcher implements Runnable {
 		oldRow = row;
 		oldCol = col;
 		oldType = blockType;
+		oldState = blockState;
 	}
 
+	public void deleteFullLine(int row) // 判断此行是否可以消，同时可消就消行
+	{
+		for (int j = 0; j < topj.maxcol; j++)
+			if (topj.unitState[row][j] != 2)
+				return;
+
+		for (int i = row; i > 3; i--)
+			// 到此即为可消，将上面的移下消此行
+			for (int j = 0; j < topj.maxcol; j++)
+				// drawUnit(i, j, unitState[i - 1][j]);
+				topj.unitState[i][j] = topj.unitState[i - 1][j];// 将状态记录改变，用于画下张图
+		score++;
+		bp.jtf.setText(String.valueOf(score));
+	}
+
+	void leftmove() {
+		if (this.blockType != -1 && isMove(0)) {
+			col -= 1;
+			drawfk(blockType);
+		}
+	}
+
+	void rightmove() {
+		if (this.blockType != -1 && isMove(1)) {
+			col += 1;
+			drawfk(blockType);
+		}
+	}
+
+	void turn() {
+		if (this.blockType != -1) {
+			blockState = (blockState + 1) % 4;
+			if (isMove(3))
+				drawfk(blockType);
+			else
+				blockState = (blockState + 3) % 4;
+		}
+	}
+
+	boolean fallmove() {
+		if (this.blockType != -1) {
+			if (isMove(2)) {
+				row += 1;
+				drawfk(blockType);
+				return true;
+			} else {
+				isfall = 0;
+				drawfk(blockType);
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public synchronized boolean isMove(int tag) // 左 0 ，右 1 ，下 2 ,旋转 3
+	{
+		int comIndex = 0x8000;
+		for (int i = row; i < row + 4; i++)
+			for (int j = col; j < col + 4; j++) {
+				if ((patten[blockType][blockState] & comIndex) != 0) {
+					if (tag == 0 && (j == 0 || topj.unitState[i][j - 1] == 2))// 是否能左移
+						return false;
+					else if (tag == 1 && (j == topj.maxcol - 1 || topj.unitState[i][j + 1] == 2))// 是否能右移
+						return false;
+					else if (tag == 2 && (i == topj.maxrow - 1 || topj.unitState[i + 1][j] == 2))// 是否能下移
+						return false;
+					else if (tag == 3 && (i > topj.maxrow - 1 || j < 0 || j > topj.maxcol - 1 || topj.unitState[i][j] == 2))// 是否能旋转
+						return false;
+				}
+				comIndex = comIndex >> 1;
+			}
+		return true;
+	}
 }

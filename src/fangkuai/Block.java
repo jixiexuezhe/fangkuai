@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
- class Block implements Runnable {
+class Block implements Runnable {
 	static final int type = 7, state = 4;
 
 	static final int[][] patten = { // 16进制代表每种方块
@@ -64,7 +64,7 @@ import javax.swing.event.*;
 			drawBlock(blocktype);
 			do {
 				try {
-					Thread.sleep(50); // 控制下落速度
+					Thread.sleep(500); // 控制下落速度
 				} catch (InterruptedException e) {
 
 				}
@@ -107,7 +107,7 @@ import javax.swing.event.*;
 					else if (isfall == 0) {
 						// lsc.drawUnit(i, j, 2); // 无法下落，画为BLUE
 						lsc.unitState[i][j] = 2;// 将状态记录改变，用于画下张图
-//						lsc.deleteFullLine(i); // 判断此行是否可以消
+						// lsc.deleteFullLine(i); // 判断此行是否可以消
 					}
 				}
 				comIndex = comIndex >> 1;
@@ -216,12 +216,12 @@ class LeftShowCanvas extends Canvas {
 
 	public LeftShowCanvas(RightPanel rp) {
 		this.rp = rp;
-//		score = Integer.valueOf(rp.jtf.getText());
+		// score = Integer.valueOf(rp.jtf.getText());
 		maxrows = 20;
 		maxcols = 10;
 		unitSize = 20;
 		unitState = new int[maxrows][maxcols];
-//		initCanvas();
+		// initCanvas();
 	}
 
 	public void initCanvas() // 初始化，画布方格
@@ -292,7 +292,7 @@ class RightPanel extends JPanel {
 
 	JLabel jlb;
 
-//	MyJPanel jp1, jp2;
+	// MyJPanel jp1, jp2;
 	JPanel jp1, jp2;
 
 	public RightPanel() {
@@ -364,26 +364,26 @@ class MyActionListener implements ActionListener {
 			Thread th = new Thread(bl);
 			th.start();
 		}
-//		for (int i = 0; i < Block.type; i++)
-//			if (e.getSource().equals(rp.jbt[i])) // 看是画哪个
-//			{
-//				bl.reInitRowCol();
-//				bl.drawBlock(i);
-//				lsc.requestFocusInWindow(); // 获得焦点
-//				return;
-//			}
-//		if (e.getSource().equals(rp.jbt2[0]))
-//			bl.leftMove();
-//		else if (e.getSource().equals(rp.jbt2[1]))
-//			bl.rightMove();
-//		else if (e.getSource().equals(rp.jbt2[2]))
-//			bl.fallMove();
-//		else if (e.getSource().equals(rp.jbt2[3]))
-//			bl.leftTurn();
-//		if(e.getSource().equals(rp.jbt2[2])){
-//			bl.fallMove();
-//		}
-//		lsc.requestFocusInWindow(); // 获得焦点
+		// for (int i = 0; i < Block.type; i++)
+		// if (e.getSource().equals(rp.jbt[i])) // 看是画哪个
+		// {
+		// bl.reInitRowCol();
+		// bl.drawBlock(i);
+		// lsc.requestFocusInWindow(); // 获得焦点
+		// return;
+		// }
+		// if (e.getSource().equals(rp.jbt2[0]))
+		// bl.leftMove();
+		// else if (e.getSource().equals(rp.jbt2[1]))
+		// bl.rightMove();
+		// else if (e.getSource().equals(rp.jbt2[2]))
+		// bl.fallMove();
+		// else if (e.getSource().equals(rp.jbt2[3]))
+		// bl.leftTurn();
+		// if(e.getSource().equals(rp.jbt2[2])){
+		// bl.fallMove();
+		// }
+		// lsc.requestFocusInWindow(); // 获得焦点
 	}
 }
 
@@ -406,7 +406,7 @@ class MyKeyAdapter extends KeyAdapter {
 	}
 }
 
- class FinalElsBlock extends JFrame {
+class FinalElsBlock extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	Block bl;
@@ -432,14 +432,12 @@ class MyKeyAdapter extends KeyAdapter {
 		lsc.addKeyListener(new MyKeyAdapter(bl));
 		this.add(lsc);
 		this.add(rp);
-//		this.addWindowListener(new WindowAdapter() {
-//			public void windowClosing(WindowEvent e) {
-//				dispose();
-//				System.exit(0);
-//			}
-//		});
+		// this.addWindowListener(new WindowAdapter() {
+		// public void windowClosing(WindowEvent e) {
+		// dispose();
+		// System.exit(0);
+		// }
+		// });
 		setVisible(true);
 	}
 }
- 
- 
