@@ -117,7 +117,7 @@ class Block implements Runnable {
 		image = lsc.createImage(lsc.getWidth(), lsc.getHeight());
 		Graphics g = image.getGraphics();
 		lsc.paint(g);
-		g.drawImage(image, 0, 0, lsc);
+//		g.drawImage(image, 0, 0, lsc);
 
 		if (isfall == 0) // 无法下落，先判断是否能消行，再重新初始化
 		{
@@ -432,12 +432,12 @@ class FinalElsBlock extends JFrame {
 		lsc.addKeyListener(new MyKeyAdapter(bl));
 		this.add(lsc);
 		this.add(rp);
-		// this.addWindowListener(new WindowAdapter() {
-		// public void windowClosing(WindowEvent e) {
-		// dispose();
-		// System.exit(0);
-		// }
-		// });
+		 this.addWindowListener(new WindowAdapter() {
+		 public void windowClosing(WindowEvent e) {
+		 dispose();
+		 System.exit(0);
+		 }
+		 });
 		setVisible(true);
 	}
 }
